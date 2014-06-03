@@ -63,9 +63,7 @@ define(['audio', 'utils', 'consts', 'grid', 'lib/domReady!'], function (audio_co
         event.preventDefault();
         var touches = event.changedTouches;
         utils.iter(touches, function (touch) {
-            var oscaillator = oscillators_by_touch_id[touch.identifier];
-            oscaillator.disconnect();
-            delete oscillators_by_touch_id[touch.identifier];
+            stop_note(touch.identifier);
         });
     };
 
@@ -74,5 +72,21 @@ define(['audio', 'utils', 'consts', 'grid', 'lib/domReady!'], function (audio_co
     canvas.addEventListener('touchcancel', handle_touch_end, false);
     canvas.addEventListener('touchleave', handle_touch_end, false);
     canvas.addEventListener('touchmove', handle_touch_move, false);
+
+    var stop_note = function (identifier) {
+        var oscillator = oscillators_by_touch_id[identifier];
+        oscillator.disconnect();
+        delete oscillator[identifier];
+    };
+
+    var stop_all_notes = function () {
+        for (var key in oscillators_by_touch_id) {
+            if (oscillators_by_touch_id.hasOwnProperty(key)) {
+                stop_note(identifier);
+            }
+        }
+    };
+    
+    window.addEventListener('resize', stop_all_notes, false);
 
 });
